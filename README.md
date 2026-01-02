@@ -1,14 +1,17 @@
 # AIExperimentTracker API
 
-## Project Description
-AIExperimentTracker is a RESTful Web API developed with **.NET 9** to manage artificial intelligence projects and their experiments.
-The system allows tracking multiple experiments under a single AI project along with their evaluation metrics.
+## Proje Açıklaması
+AIExperimentTracker, **.NET 9** kullanılarak geliştirilmiş bir RESTful Web API projesidir.  
+Bu proje, yapay zeka projelerinin ve bu projelere ait deneylerin (experiment) yönetilmesini amaçlamaktadır.
 
-This project is designed following a **layered architecture** approach demonstrated in the course materials, while also integrating **modern .NET 8/9 practices** such as Minimal APIs.
+Bir kullanıcı birden fazla yapay zeka projesine sahip olabilir.  
+Her yapay zeka projesi birden fazla deney (experiment) içerebilir ve her deney farklı değerlendirme metrikleri ile ölçülür.
+
+Proje, derste anlatılan **katmanlı mimari yaklaşımı** temel alınarak geliştirilmiş, buna ek olarak **.NET 8/9 ile önerilen Minimal API yaklaşımı** kullanılmıştır.
 
 ---
 
-## Technologies Used
+## Kullanılan Teknolojiler
 - .NET 9
 - ASP.NET Core Minimal API
 - Swagger / OpenAPI
@@ -17,39 +20,42 @@ This project is designed following a **layered architecture** approach demonstra
 
 ---
 
-## Architecture Overview
-The project follows a layered architecture:
+## Mimari Yapı
+Projede katmanlı mimari yaklaşımı uygulanmıştır.
 
-- **Entities**: Database models
-- **DTOs**: Data Transfer Objects for API requests and responses
-- **Services**: Business logic layer
-- **Data**: Database context and ORM configuration
-- **Responses**: Standard API response format
-- **Middlewares**: Global exception handling
+- **Entities**: Veritabanı tablolarını temsil eden sınıflar
+- **DTOs**: API ile veri alışverişi sırasında kullanılan veri transfer nesneleri
+- **Services**: İş kurallarının ve iş mantığının bulunduğu katman
+- **Data**: Veritabanı bağlantısı ve DbContext yapılandırması
+- **Responses**: Standart API response yapıları
+- **Middlewares**: Global hata yönetimi gibi ara katmanlar
 
-> Note: While the course examples use controller-based endpoints, this project adopts the **Minimal API approach**, which is recommended in recent .NET versions.
+> Not: Derste controller tabanlı yapı anlatılmıştır.  
+> Bu projede aynı mimari mantık korunarak, .NET 8/9 sürümlerinde önerilen **Minimal API yaklaşımı** tercih edilmiştir.
 
 ---
 
-## Entities & Relationships
+## Entity Yapıları ve İlişkiler
+
+### Entity Listesi
 - User
 - AIProject
 - Experiment
 - Metric
 
-Relationships:
-- One User can have multiple AIProjects
-- One AIProject can have multiple Experiments
-- One Experiment can have multiple Metrics
+### İlişkiler
+- Bir **User**, birden fazla **AIProject**’e sahip olabilir.
+- Bir **AIProject**, birden fazla **Experiment** içerebilir.
+- Bir **Experiment**, birden fazla **Metric** ile değerlendirilebilir.
 
 ---
 
-## API Response Format
-All API responses follow a standard format:
+## API Response Formatı
+Tüm API cevapları standart bir formatta döndürülmektedir:
 
 ```json
 {
   "success": true,
-  "message": "Operation completed successfully",
+  "message": "İşlem başarılı",
   "data": {}
 }
