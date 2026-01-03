@@ -13,5 +13,16 @@ namespace Net9RestApi.Data
         public DbSet<AIProject> AIProjects { get; set; }
         public DbSet<Experiment> Experiments { get; set; }
         public DbSet<Metric> Metrics { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Global Soft Delete Filters
+            //modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
+            //modelBuilder.Entity<AIProject>().HasQueryFilter(p => !p.IsDeleted);
+            //modelBuilder.Entity<Experiment>().HasQueryFilter(e => !e.IsDeleted);
+            //modelBuilder.Entity<Metric>().HasQueryFilter(m => !m.IsDeleted);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

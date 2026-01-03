@@ -6,10 +6,10 @@ namespace Net9RestApi.Entities
     {
         public int Id{ get; set; }
 
-        public string Email{ get; set; } = null!;
-        public string Username{ get; set; } = null!;
-     public string PasswordHash{ get; set; } = null!;
-
+        public string Email{ get; set; } = string.Empty;
+        public string Username{ get; set; } = string.Empty;
+        public string PasswordHash{ get; set; } = string.Empty;
+        public bool IsDeleted{ get; set; } = false;
         public DateTime CreatedAt{ get; set; }
         public DateTime UpdatedAt{ get; set; }
 

@@ -11,6 +11,7 @@ namespace Net9RestApi.Entities
 
         public int ExperimentId{ get; set; }
         public Experiment Experiment{ get; set; } = null!;
+        public bool IsDeleted{ get; set; } = false;
         public DateTime CreatedAt{ get; set; }
         public DateTime UpdatedAt{ get; set; }
 

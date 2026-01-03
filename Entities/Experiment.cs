@@ -15,6 +15,7 @@ namespace Net9RestApi.Entities
 
         public int AIProjectId{ get; set; }
         public AIProject AIProject{ get; set; } = null!;
+        public bool IsDeleted{ get; set; } = false;
         public DateTime CreatedAt{ get; set; }
         public DateTime UpdatedAt{ get; set; }
         //Deneye ait metrikler
