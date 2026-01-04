@@ -5,6 +5,7 @@ using Net9RestApi.DTOs;
 using Net9RestApi.DTOs.User;    
 using Net9RestApi.Services;
 using Net9RestApi.DTOs.Project;
+using Net9RestApi.DTOs.Experiment;
 
 //.NET 8/9 ile gelen Minimal API yaklaşımı kullanılmıştır
 // Controller yerine endpoint mapping tercih edilmiştir
@@ -21,6 +22,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProjectService>();
+builder.Services.AddScoped<ExperimentService>();
 
 var app = builder.Build();
 
@@ -134,4 +136,57 @@ app.MapDelete("/projects/{id:int}", async (int id, ProjectService service) =>
 
     return Results.NoContent();
 });
+
+//--------------- Experiment Endpoints ------------------
+
+//Bir projeye ait tüm experiment'leri getirir
+app.MapGet("/projects/{projectId:int}/experiments", async (int projectId, ExperimentService service) =>
+{
+    var experiments = await service.GetByProjectIdAsync(projectId);
+    return Results.Ok(ApiResponse<List<ExperimentResponseDto>>.SuccessResponse(experiments));
+});
+
+// ID ile experiment getirir
+app.MapGet("/experiments/{id:int}", async (int id, ExperimentService service) =>
+{
+    var experiment = await service.GetByIdAsync(id);
+    if (experiment == null)
+        return Results.NotFound(ApiResponse<string>.Fail("Experiment not found"));
+
+    return Results.Ok(ApiResponse<ExperimentResponseDto>.SuccessResponse(experiment));
+});
+
+//Bir projeye yeni experiment ekle
+app.MapPost("/projects/{projectId:int}/experiments", async (int projectId, ExperimentCreateDto dto, ExperimentService service) =>
+{
+    var experiment = await service.CreateAsync(projectId, dto);
+
+    if (experiment == null)
+        return Results.NotFound(ApiResponse<string>.Fail("Project not found"));
+
+    return Results.Created($"/experiments/{experiment.Id}", ApiResponse<ExperimentResponseDto>.SuccessResponse(experiment, "Experiment created successfully"));
+});
+
+//Experiment güncelle
+app.MapPut("/experiments/{id:int}", async (int id, ExperimentUpdateDto dto, ExperimentService service) =>
+{
+    var updatedExperiment = await service.UpdateAsync(id, dto);
+
+    if (!updatedExperiment)
+        return Results.NotFound(ApiResponse<string>.Fail("Experiment not found"));
+
+    return Results.Ok(ApiResponse<string>.SuccessResponse("Experiment updated successfully"));
+});
+
+//Experiment sil
+app.MapDelete("/experiments/{id:int}", async (int id, ExperimentService service) =>
+{
+    var deletedExperiment = await service.DeleteAsync(id);
+
+    if (!deletedExperiment)
+        return Results.NotFound(ApiResponse<string>.Fail("Experiment not found"));
+
+    return Results.NoContent();
+});
+
 app.Run();
