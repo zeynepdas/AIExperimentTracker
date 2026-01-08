@@ -2,154 +2,234 @@
 
 ## Proje Açıklaması
 
-AIExperimentTracker, .NET 9 kullanılarak geliştirilmiş bir RESTful Web API projesidir.
+**AIExperimentTracker**, .NET 9 kullanılarak geliştirilmiş bir RESTful Web API projesidir.
 Bu proje, yapay zeka projelerinin ve bu projelere ait deneylerin (experiment) yönetilmesini amaçlamaktadır.
 
 Bir kullanıcı birden fazla yapay zeka projesine sahip olabilir.
 Her yapay zeka projesi birden fazla deney (experiment) içerebilir.
 Her deney ise farklı değerlendirme metrikleri (metric) ile ölçülebilir.
 
-Proje, derste anlatılan katmanlı mimari (Layered Architecture) yaklaşımına uygun olarak geliştirilmiştir.
+Proje, derste anlatılan **katmanlı mimari (Layered Architecture)** yaklaşımına uygun olarak geliştirilmiştir.
 
-Kullanılan Teknolojiler
+## Kullanılan Teknolojiler
 
-.NET 9
+- .NET 9
+- ASP.NET Core
+- RESTful API
+- Entity Framework Core
+- SQLite
+- Swagger / OpenAPI
+- Git & GitHub
 
-ASP.NET Core
 
-RESTful API
-
-Entity Framework Core
-
-SQLite
-
-Swagger / OpenAPI
-
-Git & GitHub
-
-Mimari Yapı
+## Mimari Yapı
 
 Projede katmanlı mimari uygulanmıştır.
 
-Katmanlar
+### Mimari Diagram
 
-Controllers
+Aşağıdaki diyagram, AIExperimentTracker projesinde kullanılan katmanlı mimariyi göstermektedir.
+
+![Mimari Diagram](docs/architecture-diagram.png)
+
+
+
+### Katmanlar
+
+**Controllers**
 HTTP isteklerini karşılar, request/response yönetimini yapar.
 
-Services
+**Services**
 İş kuralları ve iş mantığı bu katmanda bulunur.
 
-Data
+**Data**
 Entity Framework Core DbContext ve veritabanı yapılandırmaları.
 
-Entities
+**Entities**
 Veritabanı tablolarını temsil eden sınıflar.
 
-DTOs
+**DTOs**
 API üzerinden veri alışverişi için kullanılan nesneler.
 
-Migrations
+**Migrations**
 Veritabanı şema değişiklikleri.
 
-Entity Yapıları ve İlişkiler
-Entity Listesi
 
-User
 
-AIProject
+## Entity Yapıları ve İlişkiler
+### Entity Listesi
 
-Experiment
+- User
+- AIProject
+- Experiment
+- Metric
 
-Metric
+### İlişkiler
 
-İlişkiler
+- Bir User, birden fazla AIProject’e sahip olabilir.
+- Bir AIProject, birden fazla Experiment içerebilir.
+- Bir Experiment, birden fazla Metric ile değerlendirilebilir.
 
-Bir User, birden fazla AIProject’e sahip olabilir.
+## Veritabanı Yapısı
 
-Bir AIProject, birden fazla Experiment içerebilir.
+ORM olarak **Entity Framework Core** kullanılmıştır.
 
-Bir Experiment, birden fazla Metric ile değerlendirilebilir.
+Veritabanı olarak **SQLite** tercih edilmiştir.
 
-Veritabanı Yapısı
+Veritabanı, **Code First** yaklaşımı ile geliştirilmiş ve **Migration** kullanılarak oluşturulmuştur.
 
-ORM olarak Entity Framework Core kullanılmıştır.
+### Tablolar
 
-Veritabanı olarak SQLite tercih edilmiştir.
+- **Users**
+  - Id (PK)
+  - Email
+  - Username
+  - PasswordHash
+  - CreatedAt
+  - UpdatedAt
 
-Migration kullanılarak veritabanı oluşturulmuştur.
+- **AIProjects**
+  - Id (PK)
+  - Name
+  - Description
+  - UserId (FK)
+  - CreatedAt
+  - UpdatedAt
 
-Migration Komutları
+- **Experiments**
+  - Id (PK)
+  - Name
+  - Notes
+  - ModelName
+  - Status
+  - AIProjectId (FK)
+  - CreatedAt
+  - UpdatedAt
+
+- **Metrics**
+  - Id (PK)
+  - Name
+  - Value
+  - ExperimentId (FK)
+  - CreatedAt
+  - UpdatedAt
+
+---
+
+## Migration
+
+Veritabanı şeması Entity Framework Core Migration mekanizması ile oluşturulmuştur.
+
+Kullanılan komutlar:
+
+```bash
 dotnet ef migrations add InitialCreate
 dotnet ef database update
+```
 
-API Response Formatı
+## API Response Formatı
 
 Tüm API cevapları standart bir formatta döndürülmektedir:
 
+```json
 {
   "success": true,
   "message": "İşlem başarılı",
   "data": {}
 }
+```
 
-Endpoint Listesi
-User Endpoints
-Method	Endpoint	Açıklama
-GET	/api/users	Tüm kullanıcıları getirir
-GET	/api/users/{id}	ID’ye göre kullanıcı getirir
-POST	/api/users	Yeni kullanıcı oluşturur
-PUT	/api/users/{id}	Kullanıcı günceller
-DELETE	/api/users/{id}	Kullanıcı siler
-Project Endpoints
-Method	Endpoint	Açıklama
-GET	/api/users/{userId}/projects	Kullanıcıya ait projeleri getirir
-GET	/api/projects/{id}	ID’ye göre proje getirir
-POST	/api/users/{userId}/projects	Kullanıcıya yeni proje ekler
-PUT	/api/projects/{id}	Proje günceller
-DELETE	/api/projects/{id}	Proje siler
-Experiment Endpoints
-Method	Endpoint	Açıklama
-GET	/api/projects/{projectId}/experiments	Projeye ait experiment’leri getirir
-GET	/api/experiments/{id}	ID’ye göre experiment getirir
-POST	/api/projects/{projectId}/experiments	Projeye experiment ekler
-PUT	/api/experiments/{id}	Experiment günceller
-DELETE	/api/experiments/{id}	Experiment siler
-Metric Endpoints
-Method	Endpoint	Açıklama
-GET	/api/experiments/{experimentId}/metrics	Experiment’a ait metrikleri getirir
-POST	/api/experiments/{experimentId}/metrics	Experiment’a metrik ekler
-DELETE	/api/metrics/{id}	Metrik siler
-Swagger / OpenAPI
+## Endpoint Listesi
+### User Endpoints
+| Method | Endpoint | Açıklama |
+|--------|----------|----------|
+| GET    | /api/users | Tüm kullanıcıları getirir |
+| GET    | /api/users/{id} | ID’ye göre kullanıcı getirir |
+| POST   | /api/users | Yeni kullanıcı oluşturur |
+| PUT    | /api/users/{id} | Kullanıcı günceller |
+| DELETE | /api/users/{id} | Kullanıcı siler |
 
-Swagger entegrasyonu yapılmıştır.
+
+### Project Endpoints
+
+| Method | Endpoint | Açıklama |
+|--------|----------|----------|
+| GET | /api/users/{userId}/projects | Kullanıcıya ait projeleri getirir |
+| GET | /api/projects/{id} | ID’ye göre proje getirir |
+| POST | /api/users/{userId}/projects | Kullanıcıya yeni proje ekler |
+| PUT | /api/projects/{id} | Proje günceller |
+| DELETE | /api/projects/{id} | Proje siler |
+
+
+### Experiment Endpoints
+
+| Method | Endpoint | Açıklama |
+|--------|----------|----------|
+| GET | /api/projects/{projectId}/experiments | Projeye ait experiment’leri getirir |
+| GET | /api/experiments/{id} | ID’ye göre experiment getirir |
+| POST | /api/projects/{projectId}/experiments | Projeye experiment ekler |
+| PUT | /api/experiments/{id} | Experiment günceller |
+| DELETE | /api/experiments/{id} | Experiment siler |
+
+
+### Metric Endpoints
+
+| Method | Endpoint | Açıklama |
+|--------|----------|----------|
+| GET | /api/experiments/{experimentId}/metrics | Experiment’a ait metrikleri getirir |
+| POST | /api/experiments/{experimentId}/metrics | Experiment’a metrik ekler |
+| DELETE | /api/metrics/{id} | Metrik siler |
+
+
+## Swagger / OpenAPI
+
+Swagger entegrasyonu yapılmıştır.  
 Uygulama çalıştırıldıktan sonra Swagger arayüzüne aşağıdaki adresten erişilebilir:
 
+```text
 http://localhost:{port}/swagger
+```
 
-Kurulum ve Çalıştırma
-1. Projeyi Klonla
+
+
+## Kurulum ve Çalıştırma
+
+### 1. Projeyi Klonla
+
+```bash
 git clone https://github.com/zeynepdas/AIExperimentTracker.git
 cd AIExperimentTracker
+```
 
-2. Bağımlılıkları Yükle
+### 2. Bağımlılıkları Yükle
+```bash
 dotnet restore
+```
 
-3. Veritabanını Oluştur
+### 3. Veritabanını Oluştur
+```bash
 dotnet ef database update
+```
 
-4. Uygulamayı Çalıştır
+### 4. Uygulamayı Çalıştır
+```bash
 dotnet run
+```
 
-Git Versiyon Kontrolü
+## Git Versiyon Kontrolü
 
-Feature bazlı branch yapısı kullanılmıştır.
+- Feature bazlı branch yapısı kullanılmıştır.
 
-Düzenli commit atılmıştır.
+- Düzenli commit atılmıştır.
 
-GitHub üzerinden proje yönetimi yapılmıştır.
+- GitHub üzerinden proje yönetimi yapılmıştır.
 
-Geliştirici
 
-Zeynep Daş
+
+
+
+## Geliştirici
+
+**Zeynep Daş**
 Bilgisayar Mühendisliği
 .NET 9 REST API Projesi
