@@ -55,6 +55,19 @@ namespace Net9RestApi.Services
                 CreatedAt = metric.CreatedAt
             };
         }
+        
+        //Metric güncelle
+        public async Task<bool> UpdateAsync(int id, MetricUpdateDto dto)
+        {
+            var metric = await _context.Metrics.FindAsync(id);
+            if (metric == null) return false;
+
+            metric.Name = dto.Name;
+            metric.Value = dto.Value;
+            metric.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
         // Metric sil
         public async Task<bool> DeleteAsync(int id)

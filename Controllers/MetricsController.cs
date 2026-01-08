@@ -16,7 +16,7 @@ namespace Net9RestApi.Controllers
             _metricService = metricService;
         }
 
-        // Bir experiment'e ait metric'leri getir
+        // Experiment'a ait metrikleri getir
         [HttpGet("experiments/{experimentId:int}/metrics")]
         public async Task<IActionResult> GetByExperimentId(int experimentId)
         {
@@ -34,6 +34,18 @@ namespace Net9RestApi.Controllers
                 return NotFound(ApiResponse<string>.Fail("Experiment not found"));
 
             return Ok(ApiResponse<MetricResponseDto>.SuccessResponse(metric, "Metric created successfully"));
+        }
+
+        // Metric güncelle
+        [HttpPut("metrics/{id:int}")]
+        public async Task<IActionResult> Update(int id, MetricUpdateDto dto)
+        {
+            var updated = await _metricService.UpdateAsync(id, dto);
+
+            if (!updated)
+                return NotFound(ApiResponse<string>.Fail("Metric not found"));
+
+            return Ok(ApiResponse<string>.SuccessResponse("Metric updated successfully"));
         }
 
         // Metric sil
