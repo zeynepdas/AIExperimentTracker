@@ -8,15 +8,22 @@ namespace Net9RestApi.Services
     public class MetricService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<MetricService> _logger;
 
-        public MetricService(AppDbContext context)
+        public MetricService(AppDbContext context, ILogger<MetricService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // Bir experiment'e ait tüm metric'leri getir
         public async Task<List<MetricResponseDto>> GetByExperimentIdAsync(int experimentId)
         {
+            _logger.LogInformation(
+                "Fetching metrics for ExperimentId: {ExperimentId}",
+                experimentId
+            );
+
             return await _context.Metrics
                 .Where(m => m.ExperimentId == experimentId)
                 .Select(m => new MetricResponseDto
@@ -32,8 +39,17 @@ namespace Net9RestApi.Services
         // Yeni metric ekle
         public async Task<MetricResponseDto?> CreateAsync(int experimentId, MetricCreateDto dto)
         {
-            var experimentExists = await _context.Experiments.AnyAsync(e => e.Id == experimentId);
-            if (!experimentExists) return null;
+            var experimentExists = await _context.Experiments
+                .AnyAsync(e => e.Id == experimentId);
+
+            if (!experimentExists)
+            {
+                _logger.LogWarning(
+                    "Metric creation failed. Experiment not found. ExperimentId: {ExperimentId}",
+                    experimentId
+                );
+                return null;
+            }
 
             var metric = new Metric
             {
@@ -47,6 +63,12 @@ namespace Net9RestApi.Services
             _context.Metrics.Add(metric);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation(
+                "Metric created successfully. MetricId: {MetricId}, ExperimentId: {ExperimentId}",
+                metric.Id,
+                experimentId
+            );
+
             return new MetricResponseDto
             {
                 Id = metric.Id,
@@ -55,17 +77,32 @@ namespace Net9RestApi.Services
                 CreatedAt = metric.CreatedAt
             };
         }
-        
-        //Metric güncelle
+
+        // Metric güncelle
         public async Task<bool> UpdateAsync(int id, MetricUpdateDto dto)
         {
             var metric = await _context.Metrics.FindAsync(id);
-            if (metric == null) return false;
+
+            if (metric == null)
+            {
+                _logger.LogWarning(
+                    "Metric update failed. Metric not found. MetricId: {MetricId}",
+                    id
+                );
+                return false;
+            }
 
             metric.Name = dto.Name;
             metric.Value = dto.Value;
             metric.UpdatedAt = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(
+                "Metric updated successfully. MetricId: {MetricId}",
+                id
+            );
+
             return true;
         }
 
@@ -73,10 +110,24 @@ namespace Net9RestApi.Services
         public async Task<bool> DeleteAsync(int id)
         {
             var metric = await _context.Metrics.FindAsync(id);
-            if (metric == null) return false;
+
+            if (metric == null)
+            {
+                _logger.LogWarning(
+                    "Metric delete failed. Metric not found. MetricId: {MetricId}",
+                    id
+                );
+                return false;
+            }
 
             _context.Metrics.Remove(metric);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation(
+                "Metric deleted successfully. MetricId: {MetricId}",
+                id
+            );
+
             return true;
         }
     }
