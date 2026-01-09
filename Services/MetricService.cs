@@ -16,7 +16,7 @@ namespace Net9RestApi.Services
             _logger = logger;
         }
 
-        // Bir experiment'e ait tüm metric'leri getir
+        // Bir experiment'e ait tüm metric'leri getir (Soft Delete filtreli)
         public async Task<List<MetricResponseDto>> GetByExperimentIdAsync(int experimentId)
         {
             _logger.LogInformation(
@@ -25,7 +25,7 @@ namespace Net9RestApi.Services
             );
 
             return await _context.Metrics
-                .Where(m => m.ExperimentId == experimentId)
+                .Where(m => m.ExperimentId == experimentId && !m.IsDeleted)
                 .Select(m => new MetricResponseDto
                 {
                     Id = m.Id,
@@ -40,12 +40,12 @@ namespace Net9RestApi.Services
         public async Task<MetricResponseDto?> CreateAsync(int experimentId, MetricCreateDto dto)
         {
             var experimentExists = await _context.Experiments
-                .AnyAsync(e => e.Id == experimentId);
+                .AnyAsync(e => e.Id == experimentId && !e.IsDeleted);
 
             if (!experimentExists)
             {
                 _logger.LogWarning(
-                    "Metric creation failed. Experiment not found. ExperimentId: {ExperimentId}",
+                    "Metric creation failed. Experiment not found or deleted. ExperimentId: {ExperimentId}",
                     experimentId
                 );
                 return null;
@@ -57,7 +57,8 @@ namespace Net9RestApi.Services
                 Value = dto.Value,
                 ExperimentId = experimentId,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow,
+                IsDeleted = false
             };
 
             _context.Metrics.Add(metric);
@@ -81,12 +82,13 @@ namespace Net9RestApi.Services
         // Metric güncelle
         public async Task<bool> UpdateAsync(int id, MetricUpdateDto dto)
         {
-            var metric = await _context.Metrics.FindAsync(id);
+            var metric = await _context.Metrics
+                .FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
 
             if (metric == null)
             {
                 _logger.LogWarning(
-                    "Metric update failed. Metric not found. MetricId: {MetricId}",
+                    "Metric update failed. Metric not found or deleted. MetricId: {MetricId}",
                     id
                 );
                 return false;
@@ -106,25 +108,28 @@ namespace Net9RestApi.Services
             return true;
         }
 
-        // Metric sil
+        // Metric sil (Soft Delete)
         public async Task<bool> DeleteAsync(int id)
         {
-            var metric = await _context.Metrics.FindAsync(id);
+            var metric = await _context.Metrics
+                .FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted);
 
             if (metric == null)
             {
                 _logger.LogWarning(
-                    "Metric delete failed. Metric not found. MetricId: {MetricId}",
+                    "Metric soft delete failed. Metric not found or already deleted. MetricId: {MetricId}",
                     id
                 );
                 return false;
             }
 
-            _context.Metrics.Remove(metric);
+            metric.IsDeleted = true;
+            metric.UpdatedAt = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Metric deleted successfully. MetricId: {MetricId}",
+                "Metric soft deleted successfully. MetricId: {MetricId}",
                 id
             );
 
