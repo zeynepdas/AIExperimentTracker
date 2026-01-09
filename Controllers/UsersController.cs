@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Net9RestApi.DTOs;
 using Net9RestApi.DTOs.User;
 using Net9RestApi.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Net9RestApi.Controllers
 {
@@ -57,6 +58,7 @@ namespace Net9RestApi.Controllers
         }
 
         //Kaullanıcı siler
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

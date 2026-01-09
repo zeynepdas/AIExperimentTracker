@@ -189,6 +189,16 @@ Uygulama çalıştırıldıktan sonra Swagger arayüzüne aşağıdaki adresten 
 ```text
 http://localhost:{port}/swagger
 ```
+## Authentication & Authorization
+
+Bu projede JWT (JSON Web Token) tabanlı authentication kullanılmıştır.
+
+- Kullanıcı `/api/auth/login` endpoint’i üzerinden giriş yapar.
+- Başarılı giriş sonrası JWT token üretilir.
+- Token, `Authorization: Bearer {token}` formatında gönderilerek
+  yetkili endpoint’lere erişilir.
+- Endpoint’ler `[Authorize]` attribute’u ile korunmuştur.
+- Role bilgisi JWT claim olarak eklenmiş ve role-based authorization uygulanmıştır.
 
 
 
