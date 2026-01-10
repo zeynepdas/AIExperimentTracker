@@ -47,6 +47,18 @@ namespace Net9RestApi.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AIProjects");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Initial seeded AI project",
+                            IsDeleted = false,
+                            Name = "Seed Project",
+                            UpdatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("Net9RestApi.Entities.Experiment", b =>
@@ -87,6 +99,19 @@ namespace Net9RestApi.Migrations
                     b.HasIndex("AIProjectId");
 
                     b.ToTable("Experiments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AIProjectId = 1,
+                            CreatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModelName = "ResNet50",
+                            Name = "Baseline Experiment",
+                            Status = "Completed",
+                            UpdatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("Net9RestApi.Entities.Metric", b =>
@@ -119,6 +144,18 @@ namespace Net9RestApi.Migrations
                     b.HasIndex("ExperimentId");
 
                     b.ToTable("Metrics");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ExperimentId = 1,
+                            IsDeleted = false,
+                            Name = "Accuracy",
+                            UpdatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Value = 0.92000000000000004
+                        });
                 });
 
             modelBuilder.Entity("Net9RestApi.Entities.User", b =>
@@ -155,6 +192,19 @@ namespace Net9RestApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@test.com",
+                            IsDeleted = false,
+                            PasswordHash = "admin123",
+                            Role = "Admin",
+                            UpdatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Username = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Net9RestApi.Entities.AIProject", b =>

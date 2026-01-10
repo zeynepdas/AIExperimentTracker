@@ -20,6 +20,8 @@ namespace Net9RestApi.Migrations
                     Email = table.Column<string>(type: "TEXT", nullable: false),
                     Username = table.Column<string>(type: "TEXT", nullable: false),
                     PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
+                    Role = table.Column<string>(type: "TEXT", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -37,6 +39,7 @@ namespace Net9RestApi.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -62,6 +65,7 @@ namespace Net9RestApi.Migrations
                     ModelName = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<string>(type: "TEXT", nullable: false),
                     AIProjectId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -85,6 +89,7 @@ namespace Net9RestApi.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Value = table.Column<double>(type: "REAL", nullable: false),
                     ExperimentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
@@ -98,6 +103,26 @@ namespace Net9RestApi.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "CreatedAt", "Email", "IsDeleted", "PasswordHash", "Role", "UpdatedAt", "Username" },
+                values: new object[] { 1, new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin@test.com", false, "admin123", "Admin", new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin" });
+
+            migrationBuilder.InsertData(
+                table: "AIProjects",
+                columns: new[] { "Id", "CreatedAt", "Description", "IsDeleted", "Name", "UpdatedAt", "UserId" },
+                values: new object[] { 1, new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Initial seeded AI project", false, "Seed Project", new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 });
+
+            migrationBuilder.InsertData(
+                table: "Experiments",
+                columns: new[] { "Id", "AIProjectId", "CreatedAt", "IsDeleted", "ModelName", "Name", "Notes", "Status", "UpdatedAt" },
+                values: new object[] { 1, 1, new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), false, "ResNet50", "Baseline Experiment", null, "Completed", new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+
+            migrationBuilder.InsertData(
+                table: "Metrics",
+                columns: new[] { "Id", "CreatedAt", "ExperimentId", "IsDeleted", "Name", "UpdatedAt", "Value" },
+                values: new object[] { 1, new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, false, "Accuracy", new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 0.92000000000000004 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AIProjects_UserId",

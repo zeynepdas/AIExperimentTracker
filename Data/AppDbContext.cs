@@ -22,6 +22,64 @@ namespace Net9RestApi.Data
             modelBuilder.Entity<Experiment>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<Metric>().HasQueryFilter(m => !m.IsDeleted);
 
+            // -------- SEED DATA --------
+
+            var seedDate = new DateTime(2026, 1, 10);
+
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Username = "admin",
+                    Email = "admin@test.com",
+                    PasswordHash = "admin123",
+                    Role = "Admin",
+                    CreatedAt = seedDate,
+                    UpdatedAt = seedDate,
+                    IsDeleted = false
+                }
+            );
+
+            modelBuilder.Entity<AIProject>().HasData(
+                new AIProject
+                {
+                    Id = 1,
+                    Name = "Seed Project",
+                    Description = "Initial seeded AI project",
+                    UserId = 1,
+                    CreatedAt = seedDate,
+                    UpdatedAt = seedDate,
+                    IsDeleted = false
+                }
+            );
+
+            modelBuilder.Entity<Experiment>().HasData(
+                new Experiment
+                {
+                    Id = 1,
+                    Name = "Baseline Experiment",
+                    AIProjectId = 1,
+                    ModelName = "ResNet50",
+                    Status = "Completed",
+                    CreatedAt = seedDate,
+                    UpdatedAt = seedDate,
+                    IsDeleted = false
+                }
+            );
+
+            modelBuilder.Entity<Metric>().HasData(
+                new Metric
+                {
+                    Id = 1,
+                    Name = "Accuracy",
+                    Value = 0.92,
+                    ExperimentId = 1,
+                    CreatedAt = seedDate,
+                    UpdatedAt = seedDate,
+                    IsDeleted = false
+                }
+            );
+
             base.OnModelCreating(modelBuilder);
         }
     }

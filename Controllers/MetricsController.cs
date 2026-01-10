@@ -16,7 +16,7 @@ namespace Net9RestApi.Controllers
             _metricService = metricService;
         }
 
-        // Experiment'a ait metrikleri getir
+        //  Bir Experiment'a ait metric'leri getir
         [HttpGet("experiments/{experimentId:int}/metrics")]
         public async Task<IActionResult> GetByExperimentId(int experimentId)
         {
