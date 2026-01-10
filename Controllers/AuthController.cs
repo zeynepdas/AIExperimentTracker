@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -6,8 +7,8 @@ using System.Text;
 
 using Net9RestApi.Data;
 using Net9RestApi.DTOs;
-using Net9RestApi.DTOs.Auth;
-using Microsoft.AspNetCore.Authorization;
+using Net9RestApi.DTOs.Auth; // DTO'yu buradan tanıyacak
+
 
 namespace Net9RestApi.Controllers
 {
