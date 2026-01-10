@@ -126,6 +126,21 @@ Kullanılan komutlar:
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 ```
+## Seed Data
+
+Uygulama ilk çalıştırıldığında veritabanına **başlangıç (seed) verileri**
+otomatik olarak eklenmektedir.
+
+Seed edilen veriler:
+
+- Varsayılan bir **Admin User**
+- Örnek bir **AIProject**
+- Bu projeye bağlı bir **Experiment**
+- Deneye ait örnek bir **Metric**
+
+Seed işlemleri Entity Framework Core Migration mekanizması
+üzerinden gerçekleştirilmiştir.
+
 
 ## API Response Formatı
 
@@ -180,6 +195,33 @@ Tüm API cevapları standart bir formatta döndürülmektedir:
 | POST | /api/experiments/{experimentId}/metrics | Experiment’a metrik ekler |
 | DELETE | /api/metrics/{id} | Metrik siler |
 
+## Minimal API Kullanımı
+
+Ödev gereksinimleri doğrultusunda Minimal API kullanımı örnek olarak uygulanmıştır:
+```text
+GET /minimal/users
+```
+
+## Logging
+
+Uygulamada .NET’in sunduğu **built-in logging** mekanizması (`ILogger`) kullanılmıştır.
+
+- Controller seviyesinde bilgi (Information) logları alınmaktadır.
+- Global Exception Middleware üzerinden beklenmeyen hatalar loglanmaktadır.
+- Hatalar merkezi olarak yakalanarak standart API response formatında
+  kullanıcıya döndürülmektedir.
+
+Bu yapı sayesinde uygulamanın izlenebilirliği ve hata takibi sağlanmıştır.
+
+Logging işlemleri ağırlıklı olarak **merkezi bir yapı**
+(Global Exception Middleware) üzerinden yönetilmektedir.
+
+Buna ek olarak, örnek olması amacıyla bazı controller’larda
+`ILogger` kullanılarak bilgi seviyesinde loglama yapılmıştır.
+
+Bu yaklaşım ile hem merkezi hata yönetimi sağlanmış,
+hem de controller seviyesinde loglama örneği sunulmuştur.
+
 
 ## Swagger / OpenAPI
 
@@ -200,6 +242,17 @@ Bu projede JWT (JSON Web Token) tabanlı authentication kullanılmıştır.
 - Endpoint’ler `[Authorize]` attribute’u ile korunmuştur.
 - Role bilgisi JWT claim olarak eklenmiş ve role-based authorization uygulanmıştır.
 
+## Soft Delete
+
+Bu projede **Soft Delete** yaklaşımı uygulanmıştır.
+
+- Veriler fiziksel olarak silinmemektedir.
+- Tüm entity’lerde `IsDeleted` alanı bulunmaktadır.
+- Silme işlemleri, ilgili kaydın `IsDeleted = true` olarak işaretlenmesi ile yapılmaktadır.
+- Entity Framework Core **Global Query Filter** kullanılarak,
+  silinmiş kayıtların otomatik olarak sorgulardan hariç tutulması sağlanmıştır.
+
+Bu sayede veri bütünlüğü korunmuş ve geri dönüş imkânı sağlanmıştır.
 
 
 ## Kurulum ve Çalıştırma
