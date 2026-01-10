@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Net9RestApi.DTOs;
 using Net9RestApi.DTOs.Experiment;
 using Net9RestApi.Services;
 
+
 namespace Net9RestApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api")]
     public class ExperimentsController : ControllerBase
