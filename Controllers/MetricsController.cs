@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Net9RestApi.DTOs;
 using Net9RestApi.DTOs.Metric;
@@ -10,16 +11,19 @@ namespace Net9RestApi.Controllers
     public class MetricsController : ControllerBase
     {
         private readonly MetricService _metricService;
+        private readonly ILogger<MetricsController> _logger;
 
-        public MetricsController(MetricService metricService)
+        public MetricsController(MetricService metricService, ILogger<MetricsController> logger)
         {
             _metricService = metricService;
+            _logger = logger;
         }
 
         //  Bir Experiment'a ait metric'leri getir
         [HttpGet("experiments/{experimentId:int}/metrics")]
         public async Task<IActionResult> GetByExperimentId(int experimentId)
         {
+            _logger.LogInformation("GetAllMetrics endpoint called");
             var metrics = await _metricService.GetByExperimentIdAsync(experimentId);
             return Ok(ApiResponse<List<MetricResponseDto>>.SuccessResponse(metrics));
         }
