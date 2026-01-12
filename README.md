@@ -155,6 +155,14 @@ Tüm API cevapları standart bir formatta döndürülmektedir:
 ```
 
 ## Endpoint Listesi
+
+### Auth Endpoints
+
+| Method | Endpoint | Açıklama |
+|------|--------|---------|
+| POST | /api/auth/login | Kullanıcı girişi yapar ve JWT token döner |
+
+
 ### User Endpoints
 | Method | Endpoint | Açıklama |
 |--------|----------|----------|
@@ -193,6 +201,7 @@ Tüm API cevapları standart bir formatta döndürülmektedir:
 |--------|----------|----------|
 | GET | /api/experiments/{experimentId}/metrics | Experiment’a ait metrikleri getirir |
 | POST | /api/experiments/{experimentId}/metrics | Experiment’a metrik ekler |
+| PUT | /api/metrics/{id} | Metrik günceller |
 | DELETE | /api/metrics/{id} | Metrik siler |
 
 ## Minimal API Kullanımı
